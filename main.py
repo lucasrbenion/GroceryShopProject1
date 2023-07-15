@@ -186,7 +186,7 @@ def check_password(password, hashed_password):
     hp = hashed_password.encode('utf-8')
     return bcrypt.checkpw(p,hp)
 
-#create a function that updates an item in a list dict?
+#This function updates an item in a dictionary
 def updateItemDict(dictionary, key, value):
   # Get the list of values for the key.
   unencrypted = dictionary.get(key, [])
