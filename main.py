@@ -64,6 +64,7 @@ def otpScreen(t_otp):
     otp_label = tkinter.Label(frame1, text="Grocery Store - OPT", bg='#333333', fg="#FF3399", font=("Arial", 30))
     otp_message = tkinter.Label(frame1, text=total, bg='#333333', fg="#FF3399", font=("Arial", 16))
     otp_entry = tkinter.Entry(frame1, font=("Arial", 16))
+    #Used partial to club a function and the var t_otp and passed it to otp_button via command
     action_with_arg = partial(validateOtp, t_otp)
     otp_button = tkinter.Button(frame1, text="Submit", bg="#FF3399", fg="#FFFFFF", font=("Arial", 16), height= 1, width=10, command=action_with_arg)
     # Placing widgets on the screen
