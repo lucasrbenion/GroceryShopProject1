@@ -2,7 +2,9 @@ import tkinter, csv, os, re, bcrypt, pyotp, smtplib
 from tkinter import messagebox
 from password_validator import PasswordValidator
 
-#Interface
+#Interfaces Section
+
+#User Login - Main Page
 def main():
     global window, username_entry, password_entry, prompt_label
     window = tkinter.Tk()
@@ -36,6 +38,7 @@ def main():
     frame.pack()
     window.mainloop()
 
+#One-time password screen
 def otpScreen(t_otp): 
     global window1, otp_entry, amount, total
     from functools import partial
@@ -48,11 +51,11 @@ def otpScreen(t_otp):
     frame1 = tkinter.Frame(bg='#333333')
     #Create a countdown
     amount = 60
-    total = "Confirm your One-Time Password sent to your email within {} seconds".format(str(amount))
+    total = "Confirm the One-Time Password sent to your email within {} seconds".format(str(amount))
     def countdown():
         global amount
         amount = amount - 1
-        total = "Confirm your One-Time Password sent to your email within {} seconds".format(str(amount))
+        total = "Confirm the One-Time Password sent to your email within {} seconds".format(str(amount))
         if amount == 0:
             messagebox.showerror(title="OPT", message="OTP pin has elaped")
             window1.destroy()
@@ -77,6 +80,7 @@ def otpScreen(t_otp):
     countdown()   
     window1.mainloop()
 
+#New User Register Screen
 def registerScreen():
     global window2, reg_email_entry, reg_fn_entry, reg_sur_entry, reg_pw_entry
     window.destroy()
@@ -111,6 +115,7 @@ def registerScreen():
     frame2.pack()
     window2.mainloop()
 
+#Products Screen [this is only to confirm that the user has logged in sucessfully]
 def productsScreen(): 
     window1.destroy()
     window3 = tkinter.Tk()
@@ -128,21 +133,25 @@ def productsScreen():
     frame3.pack()
     window3.mainloop()
 
-#Main Functions
+#Main Functions Section
+
+#This function checks: 
+#(1) whether a CVS file exists by calling the function checkCVSFileExists();
+#(2) whether the user and password entered match the user and password saved in the CSV file named userdatabase.
 def login():
     path = os.path.join(os.getcwd(), "userdatabase.csv")
-    if (openCSVReturnUserPw(path, username_entry.get(), password_entry.get())): 
-        t_opt = send_otp_to_email(username_entry.get())
-        print(t_opt.now())
-        messagebox.showinfo("OPT", "An OTP was sent your email account!")
-        otpScreen(t_opt)
-    else:
-        messagebox.showerror(title="Error", message="Invalid login.")
-        prompt_label.config(text="Invalid login - User/Password incorrect or account doesn't exit")
+    if checkCVSFileExists():
+        if (openCSVReturnUserPw(path, username_entry.get(), password_entry.get())): 
+            t_opt = send_otp_to_email(username_entry.get())
+            messagebox.showinfo("OPT", "An OTP was sent your email account!")
+            otpScreen(t_opt)
+        else:
+            messagebox.showerror(title="Error", message="Invalid login - User/Password incorrect or account doesn't exit")
+    else: 
+        messagebox.showerror(title="Error", message="Invalid login - User/Password incorrect or account doesn't exit")
 
 #This funtion validates if the OTP sent to a registed eamil account has been the same keyed in by the user
 def validateOtp(t_otp):
-    print(t_otp.now())
     otp_entered = otp_entry.get()
     if t_otp.verify(otp_entered)==True:
         messagebox.showinfo("Login", "Successul Secure Login using 2FA")
@@ -150,6 +159,7 @@ def validateOtp(t_otp):
     else:
         messagebox.showerror(title="Failed", message= "OTP entered does not match!! Please try again...")
 
+#This functon checks whether a CSV named userdatabase exists in the project folder
 def checkCVSFileExists():
     path = os.path.join(os.getcwd(), "userdatabase.csv")
     if os.path.exists(path):
@@ -157,6 +167,7 @@ def checkCVSFileExists():
     else:
         return False
 
+#This function checks if a value/entry exists in the CVS file named userdatabase
 def check_value_in_csv(csv_file_path, value):
   # Open the CSV file in read mode.
   with open(csv_file_path, "r") as csv_file:
@@ -174,7 +185,6 @@ def validatePassword(password):
     meets_criteria = bool
     pw = PasswordValidator()
     pw.min(8).max(15).has().uppercase().has().lowercase().has().digits().has().symbols()
-    print(pw.validate(password))
     meets_criteria = pw.validate(password)
     return meets_criteria
 
@@ -185,14 +195,14 @@ def is_valid_email(email):
         return False
     return True
 
-#create an encrypt password function using bcrypt?
+#This function encrypts a password and retuned using bcrypt and return hashed random password
 def EncrypPassword(password):
     salt = bcrypt.gensalt() # randomness
     hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
     return hashed
 
+#This function checks if the password keyed in by the user matches the hashed password
 def check_password(password, hashed_password):
-    print(password, hashed_password)
     p = password.encode('utf-8')
     hp = hashed_password.encode('utf-8')
     return bcrypt.checkpw(p,hp)
@@ -201,18 +211,16 @@ def check_password(password, hashed_password):
 def updateItemDict(dictionary, key, value):
   # Get the list of values for the key.
   unencrypted = dictionary.get(key, [])
-  print(unencrypted)
   # Add the new value to the list.
   dictionary[key] = value
-  print(dictionary)  
   return dictionary
 
+#This function opens the CVS file named userdatabase and returs True if the user and password are in the CVS file
 def openCSVReturnUserPw(csv_file_path, user, pwinput):
   # Open the CSV file in read mode.
   with open(csv_file_path, "r") as csv_file:
     # Iterate over the rows in the CSV file.
     reader = csv.reader(csv_file)
-    print(reader)
     for row in reader:
         # Check if the User & Password are in the CSV file
         if user in row:
@@ -220,6 +228,7 @@ def openCSVReturnUserPw(csv_file_path, user, pwinput):
                 return True
     return False
   
+#This function sends an OTP(one-time password), calls the send_email function and then returns the temporary OTP 
 def send_otp_to_email(email):
   #generate a random OTP for 60 seconds  
   totp = pyotp.TOTP('base32secret3232', interval=60)
@@ -230,28 +239,23 @@ def send_otp_to_email(email):
   # Return the OTP.
   return totp
 
-#Sends an email to a registered email address
+#This function sends an email containing a temporary OTP to the user's registed account 
 def send_email(email, subject, message):
-
   # Create a SMTP connection.
   connection = smtplib.SMTP('smtp.gmail.com', 587)
   connection.ehlo()
   # Start a TLS connection.
   connection.starttls()
   connection.ehlo()
-
   # Login to the account.
   connection.login('lucasrbennion@gmail.com', 'zaaappysqdxifemc')
-
   # Send the email.
   connection.sendmail('lucasrbennion@gmail.com', email,
                      'Subject: {0}\n\n{1}'.format(subject, message))
-
   # Close the connection.
   connection.close()
 
-
-#save a new user into a cvs file or datate (whatever is easier) and then return to the main screen
+#This function saves a new user into a cvs file and then returns to the main screen
 def saveNewUser(): 
     #gets the user info and saves into a cvs file
     user_credentials = {"email": reg_email_entry.get(), "first_name": reg_fn_entry.get(), "surname": reg_sur_entry.get(), "password": reg_pw_entry.get()}
@@ -266,21 +270,34 @@ def saveNewUser():
                 while is_valid_email(reg_email_entry.get()) == False:
                     messagebox.showerror('Error', 'Please insert a valid email')
                     registerScreen()
+                while (reg_fn_entry.get =="" or reg_sur_entry.get() ==""):
+                    messagebox.showerror('Error', 'Insert your name & surname!')
+                    registerScreen()
                 while validatePassword(reg_pw_entry.get()) == False:
                     messagebox.showerror('Error', 'Invalid password: your passord needs to have at least 8 characters, one being uppercase, one being a digit and one being a special character')
                     registerScreen()
-                print(user_credentials)
                 utf = EncrypPassword(reg_pw_entry.get())
                 user_credentials = updateItemDict(user_credentials, "password", utf.decode('utf-8'))
                 writer = csv.DictWriter(csvfile,fieldnames, lineterminator='\n')
                 writer.writerow(user_credentials)
+                messagebox.showinfo("New Account", "Your account has been sucessfully created!")
     else:
         with open("userdatabase.csv", mode="w") as csvfile:
             fieldnames = user_credentials.keys()
+            while is_valid_email(reg_email_entry.get()) == False:
+                messagebox.showerror('Error', 'Please insert a valid email')
+                registerScreen()
+            while (reg_fn_entry.get =="" or reg_sur_entry.get() ==""):
+                messagebox.showerror('Error', 'Insert your name & surname!')
+                registerScreen()
+            while validatePassword(reg_pw_entry.get()) == False:
+                messagebox.showerror('Error', 'Invalid password: your passord needs to have at least 8 characters, one being uppercase, one being a digit and one being a special character')
+                registerScreen()
             utf = EncrypPassword(reg_pw_entry.get())
             user_credentials = updateItemDict(user_credentials, "password", utf.decode('utf-8'))
             writer = csv.DictWriter(csvfile, fieldnames, lineterminator='\n')
             writer.writerow(user_credentials)
+            messagebox.showinfo("New Account", "Your account has been sucessfully created!")
     window2.destroy()
     main()
 
