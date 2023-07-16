@@ -44,7 +44,8 @@ def main():
     window.mainloop()
 
 def otpScreen(): 
-    global window1
+    global window1, otp_entry, amount, total
+    cd = 60
     window.destroy()
     window1 = tkinter.Tk()
     w1, h1 = window1.winfo_screenwidth(), window1.winfo_screenheight()
@@ -52,11 +53,20 @@ def otpScreen():
     window1.geometry("%dx%d+0+0" % (w1, h1))
     window1.configure(bg='#333333')
     frame1 = tkinter.Frame(bg='#333333')
+    #Create a countdown
+    amount = 0
+    total = window1.StringVar()
+    def countdown():
+        amount -= 60
+        total.set("Confirm your One-Time Password sent to your email within {cd} seconds".format(amount))
+        if cd == 0:
+            messagebox.showerror(title="OPT", message="OTP pin has elaped")
     # Creating widgets
     otp_label = tkinter.Label(frame1, text="Grocery Store - OPT", bg='#333333', fg="#FF3399", font=("Arial", 30))
-    otp_message = tkinter.Label(frame1, text="Confirm your One-Time Password sent to your email within {count down}", bg='#333333', fg="#FF3399", font=("Arial", 16))
+    otp_message = tkinter.Label(frame1, textvariable=total, bg='#333333', fg="#FF3399", font=("Arial", 16))
+    otp_message.after(1000,countdown)
     otp_entry = tkinter.Entry(frame1, font=("Arial", 16))
-    otp_button = tkinter.Button(frame1, text="Submit", bg="#FF3399", fg="#FFFFFF", font=("Arial", 16), height= 1, width=10, command=otpEmail)
+    otp_button = tkinter.Button(frame1, text="Submit", bg="#FF3399", fg="#FFFFFF", font=("Arial", 16), height= 1, width=10, command=validateOtp)
     # Placing widgets on the screen
     otp_label.grid(row=0, column=0, columnspan=2, sticky="news", pady=40)
     otp_message.grid(row=2, column=0, columnspan=2, sticky="news", pady=40)
@@ -118,19 +128,26 @@ def productsScreen():
 
 #Main Functions
 def login():
+    global totp
     path = os.path.join(os.getcwd(), "userdatabase.csv")
     if (openCSVReturnUserPw(path, username_entry.get(), password_entry.get())): 
-        send_otp_to_email(username_entry.get())
+        totp = send_otp_to_email(username_entry.get())
+        messagebox.showinfo("OPT", "An OTP was sent your email account!")
         otpScreen()
-        messagebox.showerror(title="OPT", message="An OTP was sent your email account!")
     else:
         messagebox.showerror(title="Error", message="Invalid login.")
         prompt_label.config(text="Invalid login - User/Password incorrect or account doesn't exit")
 
-
-#write a function that sends a OTP to an email and then validate if it was inserted by the user correctly. 
-def otpEmail(): 
-    productsScreen()
+#This funtion validates of the OTP sent to a registed eamil account has been keyed in by the user
+def validateOtp():
+    otp_entered = otp_entry.get()
+    if otp_entered == totp: 
+        messagebox.showinfo("Login", "Successul Secure Login using 2FA")
+        productsScreen()
+    else:
+        messagebox.showerror(title="Failed", message= "OTP entered does not match!! Please try again...")
+        window.destroy()
+        main()
 
 def checkCVSFileExists():
     path = os.path.join(os.getcwd(), "userdatabase.csv")
@@ -210,35 +227,19 @@ def openCSVReturnUserPw(csv_file_path, user, pwinput):
     return False
   
 def send_otp_to_email(email):
-  """Sends an OTP to an email address using the pyotp extension.
-
-  Args:
-    email: The email address to send the OTP to.
-    secret: The secret key for the OTP generator.
-
-  Returns:
-    The OTP that was sent.
-  """
-
-  # Create an OTP generator.
-  otp = pyotp.TOTP('base32secret3232')
+  #generate a random OTP for 60 seconds  
+  otp_pin = pyotp.TOTP('base32secret3232', interval=60)
 
   # Send the OTP to the email address.
-  send_email(email, "OTP Password", "Your OTP is: {0}".format(otp))
+  send_email(email, "OTP Password", "Your OTP is: {0}".format(otp_pin.now()))
 
   # Return the OTP.
-  return otp
+  return otp_pin.now()
 
 import smtplib
 
+#Sends an email to a registered email address
 def send_email(email, subject, message):
-  """Sends an email to a registered email address.
-
-  Args:
-    email: The email address to send the email to.
-    subject: The subject of the email.
-    message: The body of the email.
-  """
 
   # Create a SMTP connection.
   connection = smtplib.SMTP('smtp.gmail.com', 587)
@@ -248,7 +249,7 @@ def send_email(email, subject, message):
   connection.ehlo()
 
   # Login to the account.
-  connection.login('lucasrbennion@gmail.com', 'Esogtr18floki@')
+  connection.login('lucasrbennion@gmail.com', 'zaaappysqdxifemc')
 
   # Send the email.
   connection.sendmail('lucasrbennion@gmail.com', email,
