@@ -24,10 +24,6 @@ def main():
         frame, text="Login", bg="#FF3399", fg="#FFFFFF", font=("Arial", 16), height= 1, width=10, command=login)
     register_button = tkinter.Button(frame, text="Register", bg="#FF3399", fg="#FFFFFF", font=("Arial", 16), height= 1, width=10, command=registerScreen)
     readme_button = tkinter.Button(frame, text="Read me!", bg="#FF3399", fg="#FFFFFF", font=("Arial", 16), height= 1, width=10)
-    output_label = tkinter.Label(
-        window, text="Optput", bg='#333333', fg="#FF3399", font=("Arial", 15))
-    prompt_label = tkinter.Label(
-        window, text="", bg='#333333', fg="#FF3399", font=("Arial", 15))
     # Placing widgets on the screen
     login_label.grid(row=0, column=0, columnspan=2, sticky="news", pady=40)
     username_label.grid(row=1, column=0)
@@ -38,14 +34,10 @@ def main():
     register_button.grid(row=3, column=1, columnspan=1, pady=30)
     readme_button.grid(row=3, column=2, columnspan=1, pady=30)
     frame.pack()
-    output_label.pack()
-    #show results to use (row=5, column=0, columnspan=2, sticky="w", pady=40)
-    prompt_label.pack()
     window.mainloop()
 
 def otpScreen(): 
     global window1, otp_entry, amount, total
-    cd = 60
     window.destroy()
     window1 = tkinter.Tk()
     w1, h1 = window1.winfo_screenwidth(), window1.winfo_screenheight()
@@ -54,17 +46,22 @@ def otpScreen():
     window1.configure(bg='#333333')
     frame1 = tkinter.Frame(bg='#333333')
     #Create a countdown
-    amount = 0
-    total = window1.StringVar()
+    amount = 60
+    total = "Confirm your One-Time Password sent to your email within {} seconds".format(str(amount))
     def countdown():
-        amount -= 60
-        total.set("Confirm your One-Time Password sent to your email within {cd} seconds".format(amount))
-        if cd == 0:
+        global amount
+        amount = amount - 1
+        total = "Confirm your One-Time Password sent to your email within {} seconds".format(str(amount))
+        if amount == 0:
             messagebox.showerror(title="OPT", message="OTP pin has elaped")
+            window1.destroy()
+            main()
+        # Update the label text using string    
+        otp_message.config(text=total)    
+        otp_message.after(1000,countdown)  
     # Creating widgets
     otp_label = tkinter.Label(frame1, text="Grocery Store - OPT", bg='#333333', fg="#FF3399", font=("Arial", 30))
-    otp_message = tkinter.Label(frame1, textvariable=total, bg='#333333', fg="#FF3399", font=("Arial", 16))
-    otp_message.after(1000,countdown)
+    otp_message = tkinter.Label(frame1, text=total, bg='#333333', fg="#FF3399", font=("Arial", 16))
     otp_entry = tkinter.Entry(frame1, font=("Arial", 16))
     otp_button = tkinter.Button(frame1, text="Submit", bg="#FF3399", fg="#FFFFFF", font=("Arial", 16), height= 1, width=10, command=validateOtp)
     # Placing widgets on the screen
@@ -73,6 +70,8 @@ def otpScreen():
     otp_entry.grid(row=4, column=0, columnspan=2, pady=20)
     otp_button.grid(row=5, column=0, columnspan=2, pady=20)
     frame1.pack()
+    #call the calldown function every 1s
+    countdown()   
     window1.mainloop()
 
 def registerScreen():
@@ -141,13 +140,11 @@ def login():
 #This funtion validates of the OTP sent to a registed eamil account has been keyed in by the user
 def validateOtp():
     otp_entered = otp_entry.get()
-    if otp_entered == totp: 
+    if totp.verify(otp_entered)==True:
         messagebox.showinfo("Login", "Successul Secure Login using 2FA")
         productsScreen()
     else:
         messagebox.showerror(title="Failed", message= "OTP entered does not match!! Please try again...")
-        window.destroy()
-        main()
 
 def checkCVSFileExists():
     path = os.path.join(os.getcwd(), "userdatabase.csv")
@@ -234,7 +231,7 @@ def send_otp_to_email(email):
   send_email(email, "OTP Password", "Your OTP is: {0}".format(otp_pin.now()))
 
   # Return the OTP.
-  return otp_pin.now()
+  return otp_pin
 
 import smtplib
 
