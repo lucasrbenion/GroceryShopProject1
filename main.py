@@ -1,4 +1,4 @@
-import tkinter, csv, os, re, bcrypt, pyotp
+import tkinter, csv, os, re, bcrypt, pyotp, smtplib
 from tkinter import messagebox
 from password_validator import PasswordValidator
 
@@ -36,8 +36,9 @@ def main():
     frame.pack()
     window.mainloop()
 
-def otpScreen(): 
+def otpScreen(t_otp): 
     global window1, otp_entry, amount, total
+    from functools import partial
     window.destroy()
     window1 = tkinter.Tk()
     w1, h1 = window1.winfo_screenwidth(), window1.winfo_screenheight()
@@ -63,7 +64,8 @@ def otpScreen():
     otp_label = tkinter.Label(frame1, text="Grocery Store - OPT", bg='#333333', fg="#FF3399", font=("Arial", 30))
     otp_message = tkinter.Label(frame1, text=total, bg='#333333', fg="#FF3399", font=("Arial", 16))
     otp_entry = tkinter.Entry(frame1, font=("Arial", 16))
-    otp_button = tkinter.Button(frame1, text="Submit", bg="#FF3399", fg="#FFFFFF", font=("Arial", 16), height= 1, width=10, command=validateOtp)
+    action_with_arg = partial(validateOtp, t_otp)
+    otp_button = tkinter.Button(frame1, text="Submit", bg="#FF3399", fg="#FFFFFF", font=("Arial", 16), height= 1, width=10, command=action_with_arg)
     # Placing widgets on the screen
     otp_label.grid(row=0, column=0, columnspan=2, sticky="news", pady=40)
     otp_message.grid(row=2, column=0, columnspan=2, sticky="news", pady=40)
@@ -127,20 +129,21 @@ def productsScreen():
 
 #Main Functions
 def login():
-    global totp
     path = os.path.join(os.getcwd(), "userdatabase.csv")
     if (openCSVReturnUserPw(path, username_entry.get(), password_entry.get())): 
-        totp = send_otp_to_email(username_entry.get())
+        t_opt = send_otp_to_email(username_entry.get())
+        print(t_opt.now())
         messagebox.showinfo("OPT", "An OTP was sent your email account!")
-        otpScreen()
+        otpScreen(t_opt)
     else:
         messagebox.showerror(title="Error", message="Invalid login.")
         prompt_label.config(text="Invalid login - User/Password incorrect or account doesn't exit")
 
-#This funtion validates of the OTP sent to a registed eamil account has been keyed in by the user
-def validateOtp():
+#This funtion validates if the OTP sent to a registed eamil account has been the same keyed in by the user
+def validateOtp(t_otp):
+    print(t_otp.now())
     otp_entered = otp_entry.get()
-    if totp.verify(otp_entered)==True:
+    if t_otp.verify(otp_entered)==True:
         messagebox.showinfo("Login", "Successul Secure Login using 2FA")
         productsScreen()
     else:
@@ -181,13 +184,6 @@ def is_valid_email(email):
         return False
     return True
 
-class User: 
-    def __init__(self, email, name, surname, password):
-        self.email = email 
-        self.name = name
-        self.surname= surname
-        self.password= password 
-
 #create an encrypt password function using bcrypt?
 def EncrypPassword(password):
     salt = bcrypt.gensalt() # randomness
@@ -225,15 +221,13 @@ def openCSVReturnUserPw(csv_file_path, user, pwinput):
   
 def send_otp_to_email(email):
   #generate a random OTP for 60 seconds  
-  otp_pin = pyotp.TOTP('base32secret3232', interval=60)
+  totp = pyotp.TOTP('base32secret3232', interval=60)
 
   # Send the OTP to the email address.
-  send_email(email, "OTP Password", "Your OTP is: {0}".format(otp_pin.now()))
+  send_email(email, "OTP Password", "Your OTP is: {0}".format(totp.now()))
 
   # Return the OTP.
-  return otp_pin
-
-import smtplib
+  return totp
 
 #Sends an email to a registered email address
 def send_email(email, subject, message):
