@@ -6,19 +6,10 @@ The project aims to showcase how users should authenticate to a Grocery Store ap
 ## Main Modules
 * Tkinter: this is a powerful and flexible GUI toolkit that allows to create user-friendly and interactive applications with ease. It provides a wide range of widgets and tools that can be used to design and customize the interface.
 * CVS: this module is used to read and write data in CSV (Comma Separated Values) format. Once the module has been imported, the various functions are provided to work with CSV files. For example, the csv.reader() function to read data from a CSV file, and the csv.writer() function to write data to a CSV file.
+* Pyotp: a Python library that allows web applications and other systems to generate and verify one-time passwords. It's a great tool for implementing two-factor (2FA) or multi-factor (MFA) authentication methods, which can add an extra layer of security to user logins.
+* Password_validator: it is Python module used to ensure that passwords meet certain criteria, such as length, complexity, and uniqueness. With this module, it is quite straitfoward to check if a password is strong enough to be used, or if it needs to be strengthened. The module saves me a lot of time compared to manually checking passwords.
 * Bycrypt: the Bcrypt function in Python is a popular way to securely hash passwords. It uses a salt to make each hash unique and adds an additional layer of security against brute-force attacks.
 * Smtplib: module used to send emails using Python. This module defines an SMTP client session object that can be used to send mail to any Internet machine with an SMTP or ESMTP listener daemon.
-
-
-
-
-
-
-
-
-
- 
-
 
 ## Running the application
 
@@ -121,10 +112,18 @@ Subsequently, the user clicks submit.|
 |:--:|
 | **Products Screen:** User will be able to see the Grocery Products once this functionally is available|
 
-
-
-
 ## Authors
 
 - [Lucas Rodrigues Bennion](https://github.com/lucasrbenion/GroceryShopProject1)
+
+## References
+Lundh, F., 1999. An introduction to tkinter. URL: www. pythonware. com/library/tkinter/introduction/index.htm
+
+GitHub. (2021). PyOTP - The Python One-Time Password Library. [online] Available at: https://github.com/pyauth/pyotp.
+
+Python Software Foundation (2019). 3.7.3 Documentation. [online] Python.org. Available at: https://docs.python.org/3/.
+
+npm. (2022). password-validator. [online] Available at: https://www.npmjs.com/package/password-validator [Accessed 17 Jul. 2023].
+
+
 
