@@ -1,4 +1,4 @@
-
+#
 # Grocery Store
 
 The project aims to showcase how users should authenticate to a Grocery Store application through a complex password and 2FA (Two-factor authentication) using the python modules "pyotp" and "password_validator". Further, once a user account is created the password is encrypted using module "bcrypt" and then saved in a CVS file located in the project folder to ensure the password is not known to anyone other than the user. 
@@ -6,25 +6,16 @@ The project aims to showcase how users should authenticate to a Grocery Store ap
 ## Main Modules
 * Tkinter: this is a powerful and flexible GUI toolkit that allows to create user-friendly and interactive applications with ease. It provides a wide range of widgets and tools that can be used to design and customize the interface.
 * CVS: this module is used to read and write data in CSV (Comma Separated Values) format. Once the module has been imported, the various functions are provided to work with CSV files. For example, the csv.reader() function to read data from a CSV file, and the csv.writer() function to write data to a CSV file.
+* Pyotp: a Python library that allows web applications and other systems to generate and verify one-time passwords. It's a great tool for implementing two-factor (2FA) or multi-factor (MFA) authentication methods, which can add an extra layer of security to user logins.
+* Password_validator: it is Python module used to ensure that passwords meet certain criteria, such as length, complexity, and uniqueness. With this module, it is quite straitfoward to check if a password is strong enough to be used, or if it needs to be strengthened. The module saves me a lot of time compared to manually checking passwords.
 * Bycrypt: the Bcrypt function in Python is a popular way to securely hash passwords. It uses a salt to make each hash unique and adds an additional layer of security against brute-force attacks.
 * Smtplib: module used to send emails using Python. This module defines an SMTP client session object that can be used to send mail to any Internet machine with an SMTP or ESMTP listener daemon.
-
-
-
-
-
-
-
-
-
- 
-
 
 ## Running the application
 
 Download the project zip file submitted to the University of Essex under LCYS_PCOM7E May 2023 -> Unit 12 -> End of Module Assignment or download the code and readme file from GitHub: https://github.com/lucasrbenion/GroceryShopProject1
 
-Unzip the project zip file into your Python project folder. Make sure Python 3.11.4 and the path is set your Python Projects folder. 
+Unzip the project zip file into your Python project folder. Make sure Python 3.11.4 is installed and the path is set your Python Projects folder. 
 
 ```bash
     cd C:\PythonProjects\GroceryShop>
@@ -33,7 +24,7 @@ Unzip the project zip file into your Python project folder. Make sure Python 3.1
     
 ## Usage/Examples - Key functions
 
-The function below verifies that a password greater than 8 characters and a maximum of 15 characters; has at least one uppercase character, one digit, and one special character. The function returns a bool (boolean), which means that the password passed as an argument either meets the criteria or not.
+The function below verifies that a password is greater than 8 characters and a maximum of 15 characters; has at least one uppercase character, one digit, and one special character. The function returns a bool (boolean), which means that the password passed as an argument either meets the criteria or not.
 
 ```
 def validatePassword(password):
@@ -43,7 +34,7 @@ def validatePassword(password):
     meets_criteria = pw.validate(password)
     return meets_criteria
 ```
-The other important function is responsible for encrypting a password passed as an argument and returning a hashed random using the bcrypt module calling the function gensalt().
+The other important function below is responsible for encrypting a password passed as an argument and returning a hashed random password using the bcrypt module calling the function gensalt().
 
 ```
 def EncrypPassword(password):
@@ -89,7 +80,7 @@ Subsequently, the user clicks submit.|
 
 ![App Screenshot](https://raw.githubusercontent.com/lucasrbenion/GroceryShopProject1/main/screenshots/GroceryShop%20-%20Register%20-%20Password_needs_complexity.PNG)
 |:--:|
-| **Register Screen:** User leaves password and tries to submit. |
+| **Register Screen:** User leaves password blank and tries to submit. |
 | A pop up warning message requests the user to create a complex password |
 
 ![App Screenshot](https://raw.githubusercontent.com/lucasrbenion/GroceryShopProject1/main/screenshots/GroceryShop%20-%20Register%20-%20all_criteria_met.PNG)
@@ -121,10 +112,18 @@ Subsequently, the user clicks submit.|
 |:--:|
 | **Products Screen:** User will be able to see the Grocery Products once this functionally is available|
 
-
-
-
 ## Authors
 
 - [Lucas Rodrigues Bennion](https://github.com/lucasrbenion/GroceryShopProject1)
+
+## References
+Lundh, F., 1999. An introduction to tkinter. URL: www. pythonware. com/library/tkinter/introduction/index.htm
+
+GitHub. (2021). PyOTP - The Python One-Time Password Library. [online] Available at: https://github.com/pyauth/pyotp.
+
+Python Software Foundation (2019). 3.7.3 Documentation. [online] Python.org. Available at: https://docs.python.org/3/.
+
+npm. (2022). password-validator. [online] Available at: https://www.npmjs.com/package/password-validator [Accessed 17 Jul. 2023].
+
+
 
