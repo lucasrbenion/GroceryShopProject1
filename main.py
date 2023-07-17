@@ -1,4 +1,4 @@
-import tkinter, csv, os, re, bcrypt, pyotp, smtplib
+import tkinter, csv, os, re, bcrypt, pyotp, smtplib, webbrowser
 from tkinter import messagebox
 from password_validator import PasswordValidator
 
@@ -25,7 +25,7 @@ def main():
     login_button = tkinter.Button(
         frame, text="Login", bg="#FF3399", fg="#FFFFFF", font=("Arial", 16), height= 1, width=10, command=login)
     register_button = tkinter.Button(frame, text="Register", bg="#FF3399", fg="#FFFFFF", font=("Arial", 16), height= 1, width=10, command=registerScreen)
-    readme_button = tkinter.Button(frame, text="Read me!", bg="#FF3399", fg="#FFFFFF", font=("Arial", 16), height= 1, width=10)
+    readme_button = tkinter.Button(frame, text="Read me!", bg="#FF3399", fg="#FFFFFF", font=("Arial", 16), height= 1, width=10, command=openweb)
     # Placing widgets on the screen
     login_label.grid(row=0, column=0, columnspan=2, sticky="news", pady=40)
     username_label.grid(row=1, column=0)
@@ -149,6 +149,10 @@ def login():
             messagebox.showerror(title="Error", message="Invalid login - User/Password incorrect or account doesn't exit")
     else: 
         messagebox.showerror(title="Error", message="Invalid login - User/Password incorrect or account doesn't exit")
+
+#This function open a link using the default web browser
+def openweb():
+    webbrowser.open("https://github.com/lucasrbenion/GroceryShopProject1",new=1)
 
 #This funtion validates if the OTP sent to a registed eamil account has been the same keyed in by the user
 def validateOtp(t_otp):
