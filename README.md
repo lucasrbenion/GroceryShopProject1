@@ -24,7 +24,7 @@ The project aims to showcase how users should authenticate to a Grocery Store ap
 
 Download the project zip file submitted to the University of Essex under LCYS_PCOM7E May 2023 -> Unit 12 -> End of Module Assignment or download the code and readme file from GitHub: https://github.com/lucasrbenion/GroceryShopProject1
 
-Unzip the project zip file into your Python project folder. Make sure Python 3.11.4 and the path is set your Python Projects folder. 
+Unzip the project zip file into your Python project folder. Make sure Python 3.11.4 is installed and the path is set your Python Projects folder. 
 
 ```bash
     cd C:\PythonProjects\GroceryShop>
@@ -33,7 +33,7 @@ Unzip the project zip file into your Python project folder. Make sure Python 3.1
     
 ## Usage/Examples - Key functions
 
-The function below verifies that a password greater than 8 characters and a maximum of 15 characters; has at least one uppercase character, one digit, and one special character. The function returns a bool (boolean), which means that the password passed as an argument either meets the criteria or not.
+The function below verifies that a password is greater than 8 characters and a maximum of 15 characters; has at least one uppercase character, one digit, and one special character. The function returns a bool (boolean), which means that the password passed as an argument either meets the criteria or not.
 
 ```
 def validatePassword(password):
@@ -43,7 +43,7 @@ def validatePassword(password):
     meets_criteria = pw.validate(password)
     return meets_criteria
 ```
-The other important function is responsible for encrypting a password passed as an argument and returning a hashed random using the bcrypt module calling the function gensalt().
+The other important function below is responsible for encrypting a password passed as an argument and returning a hashed random password using the bcrypt module calling the function gensalt().
 
 ```
 def EncrypPassword(password):
