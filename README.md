@@ -1,4 +1,4 @@
-
+#
 # Grocery Store
 
 The project aims to showcase how users should authenticate to a Grocery Store application through a complex password and 2FA (Two-factor authentication) using the python modules "pyotp" and "password_validator". Further, once a user account is created the password is encrypted using module "bcrypt" and then saved in a CVS file located in the project folder to ensure the password is not known to anyone other than the user. 
@@ -89,7 +89,7 @@ Subsequently, the user clicks submit.|
 
 ![App Screenshot](https://raw.githubusercontent.com/lucasrbenion/GroceryShopProject1/main/screenshots/GroceryShop%20-%20Register%20-%20Password_needs_complexity.PNG)
 |:--:|
-| **Register Screen:** User leaves password and tries to submit. |
+| **Register Screen:** User leaves password blank and tries to submit. |
 | A pop up warning message requests the user to create a complex password |
 
 ![App Screenshot](https://raw.githubusercontent.com/lucasrbenion/GroceryShopProject1/main/screenshots/GroceryShop%20-%20Register%20-%20all_criteria_met.PNG)
